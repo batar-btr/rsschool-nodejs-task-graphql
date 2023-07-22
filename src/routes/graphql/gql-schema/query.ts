@@ -12,13 +12,13 @@ export const query = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     user: {
-      type: UserType,
+      type: UserType as GraphQLObjectType,
       args: {
         id: {
           type: UUIDType
         }
       },
-      resolve: async (obj, args: { id: string }, context: Context) => {
+      resolve: async (_obj, args: { id: string }, context: Context) => {
         const { prisma } = context;
         const { id } = args;
         const user = await prisma.user.findUnique({
@@ -31,14 +31,14 @@ export const query = new GraphQLObjectType({
     },
     users: {
       type: new GraphQLList(UserType),
-      resolve: async (obj, args, context: Context) => {
+      resolve: async (_obj, _args, context: Context) => {
         const { prisma } = context;
         return await prisma.user.findMany();
       }
     },
     memberTypes: {
       type: new GraphQLList(MemberType),
-      resolve: async (obj, args, context: Context) => {
+      resolve: async (_obj, _args, context: Context) => {
         const { prisma } = context;
         const memberTypes = await prisma.memberType.findMany();
         return memberTypes;
@@ -49,7 +49,7 @@ export const query = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(MemberIDGqlEnumType) }
       },
-      resolve: async (obj, args: { id: MemberTypeId }, context: Context) => {
+      resolve: async (_obj, args: { id: MemberTypeId }, context: Context) => {
         const { prisma } = context;
         const { id } = args;
         const memberType = await prisma.memberType.findUnique({
@@ -82,7 +82,7 @@ export const query = new GraphQLObjectType({
       args: {
         id: { type: UUIDType },
       },
-      resolve: async (_obj: unknown, { id }: Profile, { prisma }: Context) => {
+      resolve: async (_obj, { id }: Profile, { prisma }: Context) => {
         const profile = await prisma.profile.findUnique({ where: { id } });
         return profile;
       },
