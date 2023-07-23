@@ -1,10 +1,11 @@
 import { GraphQLObjectType } from 'graphql';
 import { Context } from '../index.js';
-import { CreateUserInputType, UserType } from '../types/user.js';
+import { CreateUserInputType, UserType, changeUserInputType } from '../types/user.js';
 import { Post, Profile, User } from '@prisma/client';
-import { PostType, createPostInputType } from '../types/post.js';
-import { ProfileType, createProfileInputType } from '../types/profile.js';
+import { PostType, changePostInputType, createPostInputType } from '../types/post.js';
+import { ProfileType, changeProfileInputType, createProfileInputType } from '../types/profile.js';
 import { UUIDType } from '../types/uuid.js';
+import { ChangeArgs } from '../types/types.js';
 
 export const mutation = new GraphQLObjectType({
   name: 'RootMutationType',
@@ -79,6 +80,45 @@ export const mutation = new GraphQLObjectType({
         const { prisma } = context;
         await prisma.profile.delete({ where: { id } });
         return id;
+      }
+    },
+    changeProfile: {
+      type: ProfileType,
+      args: {
+        id: { type: UUIDType },
+        dto: { type: changeProfileInputType }
+      },
+      resolve: async (_obj, { id, dto }: ChangeArgs, { prisma }: Context) => {
+        return await prisma.profile.update({
+          where: { id },
+          data: dto
+        });
+      }
+    },
+    changePost: {
+      type: PostType as GraphQLObjectType,
+      args: {
+        id: { type: UUIDType },
+        dto: { type: changePostInputType }
+      },
+      resolve: async (_obj, { id, dto }: ChangeArgs, { prisma }: Context) => {
+        return await prisma.post.update({
+          where: { id },
+          data: dto
+        });
+      }
+    },
+    changeUser: {
+      type: UserType as GraphQLObjectType,
+      args: {
+        id: { type: UUIDType },
+        dto: { type: changeUserInputType }
+      },
+      resolve: async (_obj, { id, dto }: ChangeArgs, { prisma }: Context) => {
+        return await prisma.user.update({
+          where: { id },
+          data: dto
+        });
       }
     },
   }
