@@ -121,5 +121,38 @@ export const mutation = new GraphQLObjectType({
         });
       }
     },
+    subscribeTo: {
+      type: UserType as GraphQLObjectType,
+      args: {
+        userId: { type: UUIDType },
+        authorId: { type: UUIDType }
+      },
+      resolve: async (_obj, args: { userId: string, authorId: string }, { prisma }: Context) => {
+        const { userId, authorId} = args;
+        return await prisma.user.update({
+          where: { id: userId },
+          data: { userSubscribedTo: { create: { authorId } } },
+        });
+      }
+    },
+    unsubscribeFrom: {
+      type: UUIDType,
+      args: {
+        userId: { type: UUIDType },
+        authorId: { type: UUIDType }
+      },
+      resolve: async (_obj, args: { userId: string, authorId: string }, { prisma }: Context) => {
+        const { userId, authorId} = args;
+        await prisma.subscribersOnAuthors.delete({
+          where: {
+            subscriberId_authorId: {
+              subscriberId: userId,
+              authorId
+            },
+          },
+        });
+        return userId;
+      }
+    }
   }
 })
