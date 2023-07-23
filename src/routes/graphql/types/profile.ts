@@ -1,6 +1,5 @@
-import { GraphQLObjectType, GraphQLBoolean, GraphQLInt, GraphQLInputObjectType, GraphQLString } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLInt, GraphQLInputObjectType } from 'graphql';
 import { UUIDType } from './uuid.js';
-
 import { Context } from '../index.js';
 import { Profile } from '@prisma/client';
 import { MemberIDGqlEnumType, MemberType } from './member-type.js';
@@ -16,8 +15,8 @@ export const ProfileType = new GraphQLObjectType({
     memberTypeId: { type: MemberIDGqlEnumType },
     memberType: {
       type: MemberType,
-      resolve: async ({ memberTypeId }: Profile, _args, { prisma }: Context) => {
-        return await prisma.memberType.findUnique({ where: { id: memberTypeId } });
+      resolve: async ({ memberTypeId }: Profile, _args, { loaders }: Context) => {
+        return await loaders.memberTypeLoader.load(memberTypeId);
       }
     }
   })

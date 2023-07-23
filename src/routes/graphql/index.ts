@@ -5,9 +5,11 @@ import { PrismaClient } from '@prisma/client';
 import { query } from './gql-schema/query.js';
 import { mutation } from './gql-schema/mutation.js';
 import depthLimit from 'graphql-depth-limit';
+import { DataLoaders, createDataLoaders } from './data-loaders/createDataLoaders.js';
 
 export interface Context {
-  prisma: PrismaClient
+  prisma: PrismaClient,
+  loaders: DataLoaders
 }
 export interface NewUser {
   name: string;
@@ -39,20 +41,22 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
       const GQLErrors = validate(schema, parse(query), [depthLimit(5)]);
 
-      if(GQLErrors.length > 0) {
+      if (GQLErrors.length > 0) {
 
         console.log('Maximum operation pepth is 5');
         return { errors: GQLErrors };
 
       } else {
 
+        const loaders = createDataLoaders(prisma);
+
         return await graphql({
           schema,
           source: query,
           variableValues: variables,
-          contextValue: { prisma }
+          contextValue: { prisma, loaders }
         });
-        
+
       }
 
     },

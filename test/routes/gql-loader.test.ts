@@ -59,6 +59,8 @@ await test('gql-loader', async (t) => {
 
     t.ok(!errors);
     t.ok(afterHistory.length - beforeHistory.length <= 6);
+    console.log(afterHistory.length);
+    console.log(beforeHistory.length);
 
     const history = afterHistory.slice(beforeHistory.length);
     const foundPostCall = history.find(

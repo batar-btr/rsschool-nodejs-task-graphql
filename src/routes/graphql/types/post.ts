@@ -14,10 +14,9 @@ export const PostType = new GraphQLObjectType({
     authorId: { type: UUIDType },
     author: {
       type: UserType as GraphQLObjectType,
-      resolve: async (source: Post, _args, { prisma }: Context) => {
+      resolve: async (source: Post, _args, { loaders }: Context) => {
         const { authorId } = source;
-        const author = await prisma.user.findUnique({ where: { id: authorId } });
-        return author;
+        return loaders.userLoader.load(authorId);
       }
     }
   })
