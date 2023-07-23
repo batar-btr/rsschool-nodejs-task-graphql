@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLBoolean, GraphQLInt } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLInt, GraphQLInputObjectType, GraphQLString } from 'graphql';
 import { UUIDType } from './uuid.js';
 
 import { Context } from '../index.js';
@@ -22,3 +22,13 @@ export const ProfileType = new GraphQLObjectType({
     }
   })
 })
+
+export const createProfileInputType = new GraphQLInputObjectType({
+  name: 'CreateProfileInput',
+  fields: {
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
+    userId: { type: UUIDType },
+    memberTypeId: { type: MemberIDGqlEnumType },
+  },
+});

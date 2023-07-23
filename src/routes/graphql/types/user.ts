@@ -44,7 +44,7 @@ export const UserType = new GraphQLObjectType({
         });
       },
     },
-    
+
     subscribedToUser: {
       type: new GraphQLList(UserType),
       resolve: async ({ id }: User, _args, { prisma }: Context) => {
@@ -62,10 +62,18 @@ export const UserType = new GraphQLObjectType({
   })
 });
 
-export const CreateUserType = new GraphQLInputObjectType({
-  name: 'CreateUser',
+export const CreateUserInputType = new GraphQLInputObjectType({
+  name: 'CreateUserInput',
   fields: {
     name: { type: new GraphQLNonNull(GraphQLString) },
     balance: { type: new GraphQLNonNull(GraphQLFloat) },
   }
 })
+
+export const changeUserInputType = new GraphQLInputObjectType({
+  name: 'ChangeUser',
+  fields: {
+    name: { type: GraphQLString },
+    balance: { type: GraphQLFloat },
+  },
+});
